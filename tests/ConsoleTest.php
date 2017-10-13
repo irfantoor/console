@@ -1,52 +1,49 @@
 <?php
  
 use IrfanTOOR\Console;
- 
-class ConsoleTest extends PHPUnit_Framework_TestCase 
+
+use PHPUnit\Framework\TestCase;
+
+class ConsoleTest extends TestCase 
 {
 
 	protected $console;
 
-	public function setup() {
+	public function setup(): void
+	{
 		$this->console = new Console;
 	}
 
-	public function testConsoleClassExists()
+	public function testConsoleClassExists(): void
 	{
 	    $this->assertInstanceOf('IrfanTOOR\Console', $this->console);
 	}
 
-	public function testConsoleWrite()
+	public function testConsoleWrite(): void
 	{
 		$c = $this->console;
 
 	    ob_start();
 	    $c->write('Hello World!');
-	    $actual = ob_get_clean();
+	    $output = ob_get_clean();
 	    
-	    $this->assertEquals('Hello World!', $actual);
+	    $this->assertEquals('Hello World!', $output);
 
 	    ob_start();
 	    $c->writeln('Hello World!');
-	    $actual = ob_get_clean();
+	    $output = ob_get_clean();
 
-	    $this->assertEquals('Hello World!' . PHP_EOL, $actual);
+	    $this->assertEquals('Hello World!' . PHP_EOL, $output);
 	}
 
-	public function testConsoleWriteWithStyle()
+	public function testConsoleWriteWithStyle(): void
 	{
 	    $c = $this->console;
 
 	    ob_start();
-	    	$c->write('Hello World!', 'red');
-	    $actual = ob_get_clean();
-
-	    ob_start();
-            $c->style('red');
-            echo 'Hello World!';
-            $c->style();
-        $expected = ob_get_clean();
-          
-	    $this->assertEquals($expected, $actual);
+	    	$c->write('Hello World!', 'color_25');
+	    $output = ob_get_clean();
+		
+        $this->assertEquals("\033[38;5;25mHello World!\033[0m", $output);
 	}
 }

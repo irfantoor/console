@@ -57,7 +57,7 @@ command    command for which help is required
         $this->help = array_merge($title, $this->help, $help_help);    
     }
 
-    public function _dump($v, $trace = true, $level = 0) {
+    public function _dump($v, $level = 0) {
         $spaces = substr('                                                   ',
                         0,
                         4 * $level);
@@ -67,7 +67,7 @@ command    command for which help is required
                 $this->write($spaces . $key . ': ', 'yellow');
                 if (is_array($value)) {
                     echo PHP_EOL;
-                    $this->dump($value, false, $level + 1);
+                    $this->_dump($value, $level + 1);
                 } else {
                     if (is_string($value)) {
                         $value = '"' . $value . '"';
@@ -78,7 +78,7 @@ command    command for which help is required
                 }
             }
         } else {
-            Debug::dump($v, $trace);
+            $this->writeln(print_r($v, 1), 'light_cyan');
         }
     }
     

@@ -28,6 +28,11 @@ class TestCommand extends Command
     function getHelp() {
         return $this->help;
     }
+    
+    function cmd_dump($v)
+    {
+        $this->_dump($v);
+    }
 }
 
 
@@ -85,6 +90,43 @@ class CommandTest extends TestCase
 	    
 	    $this->assertNull($args);
 	    $this->assertEquals(['hello', 'world'], $args2);
+	}
+	
+	public function testCommandDump(): void
+	{
+	    $cmd = new TestCommand();
+	    
+	    ob_start();
+	    $cmd->cmd_dump('Hello World!');
+	    $output = ob_get_clean();
+	    
+	    ob_start();
+	    $cmd->writeln('Hello World!', 'light_cyan');
+	    $output2 = ob_get_clean();
+	    
+	    $this->assertEquals($output, $output2);
+
+	    ob_start();
+	    $cmd->cmd_dump(
+	        [
+	            'a' => 1, 
+	            'b' => [
+	                'c' => 3
+	            ],
+	        ]
+	    );
+	    $output = ob_get_clean();
+        
+        ob_start();
+        $cmd->write('a: ', 'yellow');
+        $cmd->writeln('1', 'green');
+        $cmd->writeln('b: ', 'yellow');
+        $cmd->write('    c: ', 'yellow');
+        $cmd->writeln('3', 'green');
+        $output2 = ob_get_clean();
+        
+	    $this->assertEquals($output, $output2);
+	    
 	}
 }
     

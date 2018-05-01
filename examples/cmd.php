@@ -34,6 +34,7 @@ args    optional arguments
             ],
             'cmd:date' => 'Displays the current date',
             'cmd:cal' => 'Displays the calendar of current month',
+            'cmd:dump' => 'Dumps the help array',
         ];
         
         parent::__construct();
@@ -61,6 +62,11 @@ args    optional arguments
         $cmd = new ShellCommand();
         $cmd->execute('cal');
         $this->writeln($cmd->output());
+    }
+    
+    function cmd_dump()
+    {
+        $this->_dump($this->help);
     }
 }
 

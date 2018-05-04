@@ -100,6 +100,11 @@ command    command for which help is required
         return $method;
     }
 
+    public function getHelp()
+    {
+        return $this->help;
+    }
+
     public function help($args=null)
     {
         $help     = $this->help;

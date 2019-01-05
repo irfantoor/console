@@ -1,9 +1,3 @@
-# IrfanTOOR\Console
-
-A bare minimum console with colors
-
-ref: examples/readwrite.php
-```php
 <?php
 
 require dirname(__DIR__) . "/vendor/autoload.php";
@@ -20,4 +14,3 @@ $response = $c->read("Are you ok? [Y/N]", "cyan");
 
 $c->write("you responded with: ");
 $c->writeln($response, ["bg_white","black"]);
-```

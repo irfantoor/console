@@ -10,7 +10,6 @@
         }
     ],
     "require": {
-        "jakub-onderka/php-console-color": "^0.2.0"
     },
     "autoload": {
         "classmap": [
@@ -21,6 +20,5 @@
         }        
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5"
     }
 }

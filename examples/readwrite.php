@@ -6,11 +6,7 @@ use IrfanTOOR\Console;
 
 $c = new Console;
 
-$c->writeln(['Its a banner'], ['bg_blue','white']);
-$c->write("Hello ", "green");
-$c->writeln("World ", "red");
-
-$response = $c->read("Are you ok? [Y/N]", "cyan");
+$response = $c->read("Are you ok? [Y/N]", "info");
 
 $c->write("you responded with: ");
-$c->writeln($response, ["bg_white","black"]);
+$c->writeln($response, ["info", "reverse"]);

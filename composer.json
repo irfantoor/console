@@ -20,8 +20,5 @@
         }        
     },
     "require-dev": {
-        "irfantoor/debug": "dev-master",
-        "irfantoor/command": "dev-master",
-        "irfantoor/test": "dev-master"
     }
 }

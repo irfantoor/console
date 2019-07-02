@@ -38,11 +38,12 @@ class ConsoleTest extends Test
     public function testConsoleWriteWithStyle(): void
     {
         $c = $this->console;
+        $supported = stream_isatty(STDOUT);
 
         foreach ($c::$styles as $k => $v) {
             $txt = 'Hello World!';
 
-            if ($v) {
+            if ($v && $supported) {
                 $expected = "\033[{$v}m" . $txt . "\033[0m";
             } else {
                 $expected = $txt;

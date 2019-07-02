@@ -74,16 +74,9 @@ class Console
     /**
      * Constructs a console
      */
-    public function __construct($theme = []) {
-        if (DIRECTORY_SEPARATOR === '\\') {
-            if (function_exists('sapi_windows_vt100_support') && @sapi_windows_vt100_support(STDOUT)) {
-                self::$supported = true;
-            } elseif (getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON') {
-                self::$supported = true;
-            }
-        } else {
-            self::$supported = function_exists('posix_isatty') && @posix_isatty(STDOUT);
-        }
+    public function __construct($theme = [])
+    {
+        self::$supported = stream_isatty(STDOUT);
 
         self::$theme = array_merge(
             self::$theme,
@@ -99,7 +92,7 @@ class Console
      *
      * @return string
      */
-    function applyStyle($text, $styles = [])
+    function applyStyle($text, $styles = []): string
     {
         if (!self::$supported)
             return $text;
@@ -134,7 +127,7 @@ class Console
      * @param string|int $value
      * @return string
      */
-    private function escSequence($value)
+    private function escSequence($value): string
     {
         return "\033[{$value}m";
     }
@@ -147,7 +140,8 @@ class Console
      *
      * @return the line read from console
      */
-    public function read($prompt, $style = '') {
+    public function read($prompt, $style = ''): string
+    {
         $this->write($prompt . ' ', $style);
         $stdin = fopen('php://stdin', 'r');
         $str = fgets($stdin, 4096);
@@ -161,7 +155,8 @@ class Console
      * @param mixed $text can be string or an array of strings
      * @param mixed $style can be null, a style code as string or an array of strings.
      */
-    public function write($text = '', $style = 'none') {
+    public function write($text = '', $style = 'none'): void
+    {
         if (is_array($text)) {
             $max = 0;
 
@@ -192,7 +187,8 @@ class Console
      * @param mixed $text can be string or an array of strings
      * @param mixed $style can be null, a style code as string or an array of strings.
      */
-    public function writeln($text = '', $style = 'none') {
+    public function writeln($text = '', $style = 'none'): void
+    {
         echo $this->write($text, $style);
         echo PHP_EOL;
     }

@@ -3,22 +3,39 @@
 use IrfanTOOR\Console;
 use IrfanTOOR\Test;
 
+class MockConsole extends Console
+{
+    static function getStyles()
+    {
+        return self::$styles;
+    }
+}
+
 class ConsoleTest extends Test 
 {
-
     protected $console;
 
-    public function setup(): void
+    function setup()
     {
         $this->console = new Console;
     }
 
-    public function testConsoleClassExists(): void
+    function testConsoleClassExists()
     {
-        $this->assertInstanceOf('IrfanTOOR\Console', $this->console);
+        $this->assertInstanceOf(Console::class, $this->console);
     }
 
-    public function testConsoleWrite(): void
+    function testConsoleCanRead()
+    {
+        $this->assertTrue(method_exists($this->console, 'read'));
+        ob_start();
+        $input = $this->console->read("Hello World!");
+        $output = ob_get_clean();
+        $this->assertEquals("Hello World!", $output);
+        $this->assertEquals("", $input);
+    }
+
+    function testConsoleCanWrite()
     {
         $c = $this->console;
 
@@ -35,12 +52,12 @@ class ConsoleTest extends Test
         $this->assertEquals('Hello World!' . PHP_EOL, $output);
     }
 
-    public function testConsoleWriteWithStyle(): void
+    function testConsoleCanWriteWithStyle()
     {
-        $c = $this->console;
+        $c = new MockConsole();
         $supported = stream_isatty(STDOUT);
 
-        foreach ($c::$styles as $k => $v) {
+        foreach ($c::getStyles() as $k => $v) {
             $txt = 'Hello World!';
 
             if ($v && $supported) {

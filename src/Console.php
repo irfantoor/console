@@ -7,10 +7,11 @@ namespace IrfanTOOR;
  */
 class Console
 {
+    protected static $is_terminal;
     protected static $supported = false;
 
     /** @var array */
-    public static $styles = array(
+    protected static $styles = array(
         'none' => null,
         'bold' => '1',
         'dark' => '2',
@@ -60,7 +61,7 @@ class Console
     );
 
     /** @var array */
-    public static $theme = [
+    protected static $theme = [
         'info'     => ['cyan'],
         'error'    => ['bg_red', 'bold'],
         'warning'  => ['bg_light_yellow', 'red', 'bold'],
@@ -74,8 +75,9 @@ class Console
     /**
      * Constructs a console
      */
-    public function __construct($theme = [])
+    function __construct($theme = [])
     {
+        self::$is_terminal = PHP_SAPI === 'cli';
         self::$supported = stream_isatty(STDOUT);
 
         self::$theme = array_merge(
@@ -94,7 +96,7 @@ class Console
      */
     function applyStyle($text, $styles = []): string
     {
-        if (!self::$supported)
+        if (!self::$is_terminal || !self::$supported)
             return $text;
 
         if (is_string($styles))
@@ -103,13 +105,14 @@ class Console
         }
 
         $output = $text;
+
         foreach ($styles as $style) {
             if (isset(self::$theme[$style])) {
                 $output = $this->applyStyle($output, self::$theme[$style]);
             } else {
                 if (isset(self::$styles[$style])) {
-                    $pre  = $this->escSequence(self::$styles[$style]);
-                    $post = $this->escSequence(0);
+                    $pre  = $this->_escSequence(self::$styles[$style]);
+                    $post = $this->_escSequence(0);
                 } else {
                     $pre = $post = '';
                 }
@@ -127,7 +130,7 @@ class Console
      * @param string|int $value
      * @return string
      */
-    private function escSequence($value): string
+    private function _escSequence($value): string
     {
         return "\033[{$value}m";
     }
@@ -140,9 +143,12 @@ class Console
      *
      * @return the line read from console
      */
-    public function read($prompt, $style = ''): string
+    function read($prompt, $style = ''): string
     {
-        $this->write($prompt . ' ', $style);
+        $this->write($prompt, $style);
+        
+        if (!self::$is_terminal) return "";
+
         $stdin = fopen('php://stdin', 'r');
         $str = fgets($stdin, 4096);
         fclose($stdin);
@@ -155,7 +161,7 @@ class Console
      * @param mixed $text can be string or an array of strings
      * @param mixed $style can be null, a style code as string or an array of strings.
      */
-    public function write($text = '', $style = 'none'): void
+    function write($text = '', $style = 'none'): void
     {
         if (is_array($text)) {
             $max = 0;
@@ -187,7 +193,7 @@ class Console
      * @param mixed $text can be string or an array of strings
      * @param mixed $style can be null, a style code as string or an array of strings.
      */
-    public function writeln($text = '', $style = 'none'): void
+    function writeln($text = '', $style = 'none'): void
     {
         echo $this->write($text, $style);
         echo PHP_EOL;

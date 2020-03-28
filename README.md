@@ -87,6 +87,7 @@ $c->writeln($response, ["info", "reverse"]);
  - url
 
 Note: All the theme styles can be modiied by providing the definition while creating the console.
+or by using the function setTheme.
 
 ```php
 <?php
@@ -98,5 +99,11 @@ $c = new IrfanTOOR\Console([
 
 # Theme
 $c->writeln("Modified theme >> info", "info");
+$c->writeln("https://github.com/irfantoor/console", "url");
+
+$c->setTheme([
+    'url' => ['red', 'bg_yellow', 'underline']
+]);
+
 $c->writeln("https://github.com/irfantoor/console", "url");
 ```

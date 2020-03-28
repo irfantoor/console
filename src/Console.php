@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace IrfanTOOR;
 
@@ -7,11 +7,37 @@ namespace IrfanTOOR;
  */
 class Console
 {
-    protected static $is_terminal;
-    protected static $supported = false;
+    /**
+     * @var const
+     */
+    const NAME = "Irfan's Console";
 
-    /** @var array */
-    protected static $styles = array(
+    /**
+     * @var const
+     */
+    const DESCRIPTION = "A bare minimum console with colors";
+
+    /**
+     * @var const
+     */
+    const VERSION = "0.6.2"; // @@VERSION
+
+    /**
+     * @var bool
+     */
+    protected $is_terminal = false;
+
+    /**
+     * @var bool
+     */
+    protected $supported = false;
+
+    /**
+     * List of console styels
+     *
+     * @var array
+     */
+    protected $styles = array(
         'none' => null,
         'bold' => '1',
         'dark' => '2',
@@ -60,13 +86,17 @@ class Console
         'bg_white' => '107',
     );
 
-    /** @var array */
-    protected static $theme = [
+    /**
+     * Default Theme
+     *
+     * @var array
+     */
+    protected $theme = [
         'info'     => ['cyan'],
         'error'    => ['bg_red', 'bold'],
         'warning'  => ['bg_light_yellow', 'red', 'bold'],
         'success'  => ['bg_green', 'bold'],
-        
+
         'note'     => ['bg_light_yellow', 'black'],
         'footnote' => ['dark'],
         'url'      => ['blue', 'underline'],
@@ -74,14 +104,45 @@ class Console
 
     /**
      * Constructs a console
+     *
+     * @param array
      */
-    function __construct($theme = [])
+    function __construct(array $theme = [])
     {
-        self::$is_terminal = PHP_SAPI === 'cli';
-        self::$supported = stream_isatty(STDOUT);
+        $this->is_terminal = PHP_SAPI === 'cli';
+        $this->supported = stream_isatty(STDOUT);
+        $this->setTheme($theme);
+    }
 
-        self::$theme = array_merge(
-            self::$theme,
+    /**
+     * Returns array of defined styles
+     *
+     * @return array
+     */
+    public function getStyles()
+    {
+        return $this->styles;
+    }
+
+    /**
+     * Returns array of defined styles of a theme
+     *
+     * @return array
+     */
+    public function getTheme()
+    {
+        return $this->theme;
+    }
+
+    /**
+     * Sets styles of a theme
+     *
+     * @param array e.g. ['style' => ['bg_red', 'bold'], ...]
+     */
+    public function setTheme(array $theme)
+    {
+        $this->theme = array_merge(
+            $this->theme,
             $theme
         );
     }
@@ -90,13 +151,18 @@ class Console
      * Returns the text with the styles applied to it
      *
      * @param string
-     * @param string|array 
+     * @param string|array
      *
      * @return string
      */
     function applyStyle($text, $styles = []): string
     {
-        if (!self::$is_terminal || !self::$supported)
+        if (!$styles)
+        {
+            $styles = "none";
+        }
+
+        if (!$this->is_terminal || !$this->supported)
             return $text;
 
         if (is_string($styles))
@@ -107,11 +173,11 @@ class Console
         $output = $text;
 
         foreach ($styles as $style) {
-            if (isset(self::$theme[$style])) {
-                $output = $this->applyStyle($output, self::$theme[$style]);
+            if (isset($this->theme[$style])) {
+                $output = $this->applyStyle($output, $this->theme[$style]);
             } else {
-                if (isset(self::$styles[$style])) {
-                    $pre  = $this->_escSequence(self::$styles[$style]);
+                if (isset($this->styles[$style])) {
+                    $pre  = $this->_escSequence($this->styles[$style]);
                     $post = $this->_escSequence(0);
                 } else {
                     $pre = $post = '';
@@ -127,10 +193,10 @@ class Console
     /**
      * Returns escape sequence to change color
      *
-     * @param string|int $value
+     * @param string $value
      * @return string
      */
-    private function _escSequence($value): string
+    private function _escSequence(string $value): string
     {
         return "\033[{$value}m";
     }
@@ -139,15 +205,15 @@ class Console
      * Read a line from input with an optional prompt and optional style
      *
      * @param string $prompt can be string to be prompted before reading from console
-     * @param mixed $style can be null, a style code as string or an array of strings.
+     * @param null|string|array $style can be null, a style code as string or an array of strings.
      *
      * @return the line read from console
      */
-    function read($prompt, $style = ''): string
+    function read(string $prompt, $style = null): string
     {
         $this->write($prompt, $style);
-        
-        if (!self::$is_terminal) return "";
+
+        if (!$this->is_terminal) return "";
 
         $stdin = fopen('php://stdin', 'r');
         $str = fgets($stdin, 4096);
@@ -158,10 +224,10 @@ class Console
     /**
      * Write a line or a group of lines to output
      *
-     * @param mixed $text can be string or an array of strings
-     * @param mixed $style can be null, a style code as string or an array of strings.
+     * @param string|array $text can be string or an array of strings
+     * @param null|string|array $style can be null, a style code as string or an array of strings.
      */
-    function write($text = '', $style = 'none'): void
+    function write($text = '', $style = null): void
     {
         if (is_array($text)) {
             $max = 0;
@@ -190,10 +256,10 @@ class Console
     /**
      * Write a line or a group of lines to output and an End of Line finally.
      *
-     * @param mixed $text can be string or an array of strings
-     * @param mixed $style can be null, a style code as string or an array of strings.
+     * @param string|array $text can be string or an array of strings
+     * @param null|string|array $style can be null, a style code as string or an array of strings.
      */
-    function writeln($text = '', $style = 'none'): void
+    function writeln($text = '', $style = null): void
     {
         echo $this->write($text, $style);
         echo PHP_EOL;

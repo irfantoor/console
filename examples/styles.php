@@ -12,7 +12,7 @@ $line = str_repeat('-', $c1+$c2+6);
 $c->writeln("Foreground Styles", 'bold');
 $c->writeln($line);
 
-foreach ($c::$styles as $k => $v) {
+foreach ($c->getStyles() as $k => $v) {
     if (strpos($k, 'bg_') !== false)
             continue;
 
@@ -24,12 +24,13 @@ foreach ($c::$styles as $k => $v) {
     $c->write("$txt " . str_repeat(' ', $c2 - $l2), $k);
     $c->writeln(" |");
 }
+
 $c->writeln($line);
 
 $c->writeln("Background Styles", 'bold');
 $c->writeln($line);
 
-foreach ($c::$styles as $k => $v) {
+foreach ($c->getStyles() as $k => $v) {
     if (strpos($k, 'bg_') === false)
             continue;
 
@@ -41,12 +42,13 @@ foreach ($c::$styles as $k => $v) {
     $c->write("$txt " . str_repeat(' ', $c2 - $l2), $k);
     $c->writeln(" |");
 }
+
 $c->writeln($line);
 
 $c->writeln("Theme Styles", 'bold');
 $c->writeln($line);
 
-foreach ($c::$theme as $k => $v) {
+foreach ($c->getTheme() as $k => $v) {
     if (strpos($k, 'bg_') !== false)
             continue;
 
@@ -58,4 +60,5 @@ foreach ($c::$theme as $k => $v) {
     $c->write("$txt " . str_repeat(' ', $c2 - $l2), $k);
     $c->writeln(" |");
 }
+
 $c->writeln($line);

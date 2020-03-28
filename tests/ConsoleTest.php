@@ -1,17 +1,9 @@
 <?php
- 
+
 use IrfanTOOR\Console;
 use IrfanTOOR\Test;
 
-class MockConsole extends Console
-{
-    static function getStyles()
-    {
-        return self::$styles;
-    }
-}
-
-class ConsoleTest extends Test 
+class ConsoleTest extends Test
 {
     protected $console;
 
@@ -42,7 +34,7 @@ class ConsoleTest extends Test
         ob_start();
         $c->write('Hello World!');
         $output = ob_get_clean();
-        
+
         $this->assertEquals('Hello World!', $output);
 
         ob_start();
@@ -54,10 +46,10 @@ class ConsoleTest extends Test
 
     function testConsoleCanWriteWithStyle()
     {
-        $c = new MockConsole();
+        $c = new Console();
         $supported = stream_isatty(STDOUT);
 
-        foreach ($c::getStyles() as $k => $v) {
+        foreach ($c->getStyles() as $k => $v) {
             $txt = 'Hello World!';
 
             if ($v && $supported) {
@@ -69,8 +61,42 @@ class ConsoleTest extends Test
             ob_start();
                 $c->write($txt, $k);
             $output = ob_get_clean();
-            
+
             $this->assertEquals($expected, $output);
         }
+    }
+
+    function testgetStyles()
+    {
+        $c = new Console();
+        $styles = $c->getStyles();
+        $this->assertArray($styles);
+
+        foreach ($styles as $name => $def) {
+            $this->assertString($name);
+            if ($name === 'none') {
+                $this->assertNull($def);
+            } else {
+                $this->assertString($def);
+            }
+
+            $this->assertEquals((int) $def, $def);
+        }
+    }
+
+    function testGetTheme()
+    {
+        $c = new Console();
+        $theme = $c->getTheme();
+        $this->assertArray($theme);
+
+        foreach ($theme as $style => $def) {
+            $this->assertArray($def);
+        }
+
+        $this->assertTrue(isset($theme['info']));
+        $this->assertTrue(isset($theme['error']));
+        $this->assertTrue(isset($theme['warning']));
+        $this->assertTrue(isset($theme['success']));
     }
 }
